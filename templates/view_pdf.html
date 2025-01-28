@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de PDF</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden; 
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            filter: invert(100%); 
+            background-color: black; 
+        }
+    </style>
+</head>
+<body>
+    <iframe id="pdfViewer" src="{{ pdf_url }}#page={{ page }}&view=FitH"></iframe>
+</body>
+</html>
