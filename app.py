@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#!/usr/bin/env python
 from flask import Flask, render_template, send_from_directory, url_for, request
 import os
 
@@ -6,6 +7,8 @@ app = Flask(__name__)
 
 PDF_FOLDER = os.path.join('lectures')
 app.config['UPLOAD_FOLDER'] = PDF_FOLDER
+#app.config["TEMPLATES_AUTO_RELOAD"] = True
+#app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
 
 if not os.path.exists(PDF_FOLDER):
     os.makedirs(PDF_FOLDER)
