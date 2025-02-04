@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-#!/usr/bin/env python
 from flask import Flask, render_template, send_from_directory, url_for, request
 import os
 
