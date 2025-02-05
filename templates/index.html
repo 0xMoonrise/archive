@@ -14,6 +14,13 @@
     <button class="upload-button" onclick="document.getElementById('file-input').click()">Subir Archivo</button>
 
     <div class="pdf-list">
+{% for md in md_files %}
+<div class="pdf-card-container">
+    <a href="{{ url_for('view_md', filename=md) }}" class="pdf-card">
+        <div class="pdf-title">{{ md }}</div>
+    </a>
+</div>
+{% endfor %}
         {% for pdf in pdf_files %}
         <div class="pdf-card-container">
             <a href="{{ url_for('view_pdf', filename=pdf) }}" class="pdf-card">
@@ -21,7 +28,7 @@
                 <div class="pdf-title">{{ pdf }}</div>
             </a>
         </div>
-        {% endfor %}
+        {% endfor %}        
     </div>
 
     <input type="file" id="file-input" accept=".pdf" onchange="uploadFile()">
@@ -52,7 +59,7 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             {% for pdf in pdf_files %}
-                loadPDFPreview("{{ url_for('serve_pdf', filename=pdf) }}", "pdf-canvas-{{ loop.index }}");
+                loadPDFPreview("{{ url_for('serve_file', filename=pdf) }}", "pdf-canvas-{{ loop.index }}");
             {% endfor %}
         });
         function uploadFile() {
