@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 import os
 
-from flask import Flask, render_template, send_from_directory, url_for, request
-from utils.utils import is_valid_file_ext
+from flask import Flask, render_template,\
+    send_from_directory, url_for, request, jsonify
+# from utils.utils import is_valid_file_ext
 
 app = Flask(__name__)
 
@@ -17,7 +18,8 @@ if not os.path.exists(PDF_FOLDER):
 
 @app.route('/')
 def index():
-    pdf_files = [f for f in os.listdir(PDF_FOLDER) if is_valid_file_ext(f)]
+    extensions = ('.pdf', '.md')
+    pdf_files = [f for f in os.listdir(PDF_FOLDER) if f.endswith(extensions)]
     return render_template('index.html', pdf_files=pdf_files)
 
 
@@ -36,19 +38,25 @@ def view_pdf(filename):
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-
     if 'file' not in request.files:
-        return {'success': False, 'message': 'File not found.'}
+        return jsonify({'success': False,
+                        'message': 'File not found.'}), 400
 
     file = request.files['file']
-    if file.filename == '' and file.filename is None:
-        return {'success': False, 'message': 'Invalid file name.'}
 
-    if file and file.filename.endswith('.pdf'):
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-        return {'success': True, 'message': 'File uploaded successfully.'}
+    if not file.filename:
+        return jsonify({'success': False,
+                        'message': 'Invalid file name.'}), 400
 
-    return {'success': False, 'message': 'Only PDF files are allowed'}
+    if file.filename.endswith('.pdf'):
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        file.save(file_path)
+        return jsonify({'success': True,
+                        'message': 'File uploaded successfully.',
+                        'path': file_path}), 201
+
+    return jsonify({'success': False,
+                    'message': 'Only PDF files are allowed.'}), 415
 
 
 if __name__ == '__main__':
