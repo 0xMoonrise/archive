@@ -12,13 +12,16 @@
     <h1>Moonrise's Archive</h1>
 
     <div class="card-list">
-    	<div class="card-container">
-    	    <a class="card" onclick="document.getElementById('file-input').click()">
-				<div class="card-thumbnail" style="background: #454545;"></div>
-    	        <div class="card-title">Upload File</div>
-    	    </a>
-    	</div>
-    	
+        <div class="card-container">
+            <a class="card" onclick="document.getElementById('file-input').click()">
+                <div class="card-thumbnail" style="background: #3d3d3d;">
+                    <svg class="plus-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 4V12M12 12V20M12 12H4M12 12H20" stroke="#bb86fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="card-title">Upload File</div>
+            </a>
+        </div>    	
 		{% for md in md_files %}
 		<div class="card-container">
 		    <a href="{{ url_for('view_md', filename=md) }}" class="card">
