@@ -1,4 +1,3 @@
-/* Modo oscuro por defecto */
 body {
     font-family: Arial, sans-serif;
     background-color: #0d1117;
@@ -9,26 +8,26 @@ body {
 }
 
 .container {
+	border-radius: 8px;
     background-color: #161b22;
     padding: 30px;
-    border-radius: 8px;
     max-width: 800px;
     width: 100%;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
-/* Markdown */
 .markdown-body {
     font-size: 16px;
     line-height: 1.6;
 }
-
-/* Código */
+code {
+	border-radius: 8px;
+}
 pre {
     background-color: #21262d;
-    padding: 10px;
-    border-radius: 5px;
+    padding: 4px;
     overflow-x: auto;
+    border-radius: 8px;
 }
 
 .copy-btn {
@@ -40,10 +39,10 @@ pre {
     border: none;
     padding: 5px 10px;
     font-size: 12px;
-    border-radius: 5px;
     cursor: pointer;
     opacity: 0.8;
     transition: opacity 0.2s;
+	border-radius: 8px;
 }
 
 .copy-btn:hover {
@@ -51,5 +50,66 @@ pre {
 }
 
 .copy-btn:active {
-    background-color: #50fa7b;
+    background: black;
+}
+
+hr {
+	border: none; 
+	height: 2px; 
+	background: #30363d; 
+	margin: 20px 0; 
+	border-radius: 4px; 
+	opacity: 0.8; 
+}
+
+
+table {
+	border-collapse: separate;
+	border-spacing: 0; 
+	width: 100%;
+	margin-bottom: 1em;
+	border: 1px solid #30363d; 
+	background-color: #161b22; 
+	border-radius: 8px;
+}
+
+th, td {
+	text-align: left;
+	padding: 12px;
+	border: 0.5px solid #30363d; 
+}
+
+th {
+	background-color: #3f4d67;
+	color: white;
+	font-weight: bold;
+}
+
+tr:nth-child(odd) {
+	background-color: #1f242c;
+}
+
+tr:nth-child(even) {
+	background-color: #21262d; 
+}
+
+tr:hover {
+	background-color: #2a2f3a; 
+}
+
+
+table tr:first-child th:first-child {
+	border-top-left-radius: 8px;
+}
+
+table tr:first-child th:last-child {
+	border-top-right-radius: 8px;
+}
+
+table tr:last-child td:first-child {
+	border-bottom-left-radius: 8px;
+}
+
+table tr:last-child td:last-child {
+	border-bottom-right-radius: 8px;
 }

@@ -54,7 +54,7 @@ def view_md(filename):
             md_url=url_for('serve_file', filename=filename),
             content=markdown.markdown(
                 md_content,
-                extensions=['fenced_code'],
+                extensions=['fenced_code', 'tables'],
                 output_format="html5"))
     return "File not found", 404
 

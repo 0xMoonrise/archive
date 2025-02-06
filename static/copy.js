@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll("pre").forEach((preBlock) => {
-        let code = preBlock.querySelector("code");
+        let code = preBlock.querySelector("code:not(.language-mermaid)");
         if (!code) return;
 
         let button = document.createElement("button");
