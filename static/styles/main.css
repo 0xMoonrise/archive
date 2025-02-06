@@ -1,3 +1,8 @@
+.mermaid-container {
+    margin-top: 20px;  /* Espaciado entre diagramas */
+    max-width: 100%;   /* Limitar el ancho */
+}
+
 body {
     font-family: 'Roboto', sans-serif;
     background-color: #121212; 
