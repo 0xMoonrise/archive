@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Markdown Viewer</title>
+    <title>Archive</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.css">
 </head>
@@ -16,6 +16,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <script>
+		hljs.registerAliases("mermaid", { languageName: "plaintext" })
         hljs.highlightAll();
         window.onload = function() {
             if (window.MathJax) {
@@ -32,5 +33,28 @@
         });
     </script>
     <script src="{{ url_for('static', filename='copy.js') }}"></script>
+	<script type="module">
+		import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+		mermaid.initialize({ startOnLoad: false });
+		
+		const drawDiagram = async function () {
+			const codeBlocks = document.querySelectorAll('pre code.language-mermaid');
+			codeBlocks.forEach(async (block) => {
+				const graphDefinition = block.innerText;
+				const element = document.createElement('div'); 
+				try {
+					const { svg } = await mermaid.render('graphDiv', graphDefinition);
+					element.innerHTML = svg;
+					block.parentElement.replaceWith(element);
+				} catch (error) {
+					console.error('Error: ', error);
+				}
+			});
+		};
+		document.addEventListener('DOMContentLoaded', function() {
+			drawDiagram();
+		});
+	</script>
+	
 </body>
 </html>
