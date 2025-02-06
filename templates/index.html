@@ -11,21 +11,27 @@
 <body>
     <h1>Moonrise's Archive</h1>
 
-    <button class="upload-button" onclick="document.getElementById('file-input').click()">Subir Archivo</button>
-
-    <div class="pdf-list">
-{% for md in md_files %}
-<div class="pdf-card-container">
-    <a href="{{ url_for('view_md', filename=md) }}" class="pdf-card">
-        <div class="pdf-title">{{ md }}</div>
-    </a>
-</div>
-{% endfor %}
+    <div class="card-list">
+    	<div class="card-container">
+    	    <a class="card" onclick="document.getElementById('file-input').click()">
+				<div class="card-thumbnail" style="background: #454545;"></div>
+    	        <div class="card-title">Upload File</div>
+    	    </a>
+    	</div>
+    	
+		{% for md in md_files %}
+		<div class="card-container">
+		    <a href="{{ url_for('view_md', filename=md) }}" class="card">
+		    	<div class="card-thumbnail" style='background: white;'></div>
+		        <div class="card-title">{{ md }}</div>
+		    </a>
+		</div>
+		{% endfor %}
         {% for pdf in pdf_files %}
-        <div class="pdf-card-container">
-            <a href="{{ url_for('view_pdf', filename=pdf) }}" class="pdf-card">
-                <canvas id="pdf-canvas-{{ loop.index }}" class="pdf-thumbnail"></canvas>
-                <div class="pdf-title">{{ pdf }}</div>
+        <div class="card-container">
+            <a href="{{ url_for('view_pdf', filename=pdf) }}" class="card">
+                <canvas id="pdf-canvas-{{ loop.index }}" class="card-thumbnail"></canvas>
+                <div class="card-title">{{ pdf }}</div>
             </a>
         </div>
         {% endfor %}        
