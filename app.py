@@ -76,7 +76,7 @@ def upload_file():
         return jsonify({'success': False,
                         'message': 'Invalid file name.'}), 400
 
-    if file.filename.endswith('.pdf'):
+    if file.filename.endswith('.md'):
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(file_path)
         return jsonify({'success': True,

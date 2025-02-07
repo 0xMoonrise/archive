@@ -45,7 +45,7 @@
 
     </div>
 
-    <input type="file" id="file-input" accept=".pdf" onchange="uploadFile()">
+    <input type="file" id="file-input" accept="application/pdf,.md" onchange="uploadFile()">
 	<script src="https://mozilla.github.io/pdf.js/build/pdf.mjs" type="module"></script>
     <script>
         function loadPDFPreview(url, canvasId) {
@@ -94,15 +94,11 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('Archivo subido correctamente');
                         window.location.reload(); 
-                    } else {
-                        alert('Error al subir el archivo');
-                    }
+                    } 
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error al subir el archivo');
                 });
             }
         }
