@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 import os
 
-from flask import Flask, render_template,\
-    send_from_directory, url_for, request, jsonify
+from flask import(
+    Flask,
+    render_template,
+    send_from_directory,
+    url_for,
+    request,
+    jsonify
+)
 import markdown
 
 app = Flask(__name__)
