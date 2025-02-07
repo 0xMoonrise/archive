@@ -75,3 +75,8 @@ h1 {
     display: none;
 }
 
+iframe{
+    border: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
