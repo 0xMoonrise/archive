@@ -8,6 +8,7 @@ import markdown
 app = Flask(__name__)
 FOLDER = os.path.join('lectures')
 app.config['UPLOAD_FOLDER'] = FOLDER
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 60
 
 if not os.path.exists(FOLDER):
     os.makedirs(FOLDER)
