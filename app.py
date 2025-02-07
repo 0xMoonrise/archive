@@ -15,6 +15,7 @@ app = Flask(__name__)
 FOLDER = os.path.join('lectures')
 app.config['UPLOAD_FOLDER'] = FOLDER
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 60
+extensions = ('.pdf','.md')
 
 if not os.path.exists(FOLDER):
     os.makedirs(FOLDER)
@@ -22,7 +23,6 @@ if not os.path.exists(FOLDER):
 
 @app.route('/')
 def index():
-    extensions = ('.pdf','.md')
     files = [f for f in os.listdir(FOLDER) if f.endswith(extensions)]
     return render_template('index.html', files=files)
 
@@ -73,7 +73,7 @@ def upload_file():
         return jsonify({'success': False,
                         'message': 'Invalid file name.'}), 400
 
-    if file.filename.endswith('.md'):
+    if file.filename.endswith(extensions):
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(file_path)
         return jsonify({'success': True,

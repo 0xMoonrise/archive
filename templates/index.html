@@ -95,15 +95,11 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('Archivo subido correctamente');
                         window.location.reload(); 
-                    } else {
-                        alert('Error al subir el archivo');
-                    }
+                    } 
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error al subir el archivo');
                 });
             }
         }
