@@ -35,9 +35,9 @@
                 </div>
             {% elif file.endswith('.pdf') %}
                 <div class="card-container">
-                    <a href="{{ url_for('view_pdf', filename=pdf) }}" class="card">
+                    <a href="{{ url_for('view_pdf', filename=file) }}" class="card">
                         <canvas id="pdf-canvas-{{ loop.index }}" class="card-thumbnail"></canvas>
-                        <div class="card-title">{{ pdf }}</div>
+                        <div class="card-title">{{ file }}</div>
                     </a>
                 </div>
             {% endif %}            
