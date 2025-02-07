@@ -50,6 +50,7 @@
         function loadPDFPreview(url, canvasId) {
         	var { pdfjsLib } = globalThis;
         	pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.mjs';
+        	pdfjsLib.GlobalWorkerOptions.standardFontDataUrl = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@latest/cmaps/standard_fonts.bin';
             pdfjsLib.getDocument(url).promise.then(pdf => {
                 pdf.getPage(1).then(page => {
                     const scale = 1.5;
