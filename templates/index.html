@@ -44,7 +44,7 @@
         {% endfor %}
     </div>
 
-    <input type="file" id="file-input" accept=".pdf" onchange="uploadFile()">
+    <input type="file" id="file-input" accept=".pdf,.md" onchange="uploadFile()">
 	<script src="https://mozilla.github.io/pdf.js/build/pdf.mjs" type="module"></script>
     <script>
         function loadPDFPreview(url, canvasId) {
