@@ -23,29 +23,28 @@
             </a>
         </div>    	
 
-		{% for md in md_files %}
-		<div class="card-container">
-		    <a href="{{ url_for('view_md', filename=md) }}" class="card">
-                <div class="card-thumbnail">
-                    <iframe src="{{ url_for('view_md', filename=md) }}" class="card-thumbnail" scrolling="no"></iframe>
+        {% for file in files %}
+            {% if file.endswith('.md') %}
+                <div class="card-container">
+                    <a href="{{ url_for('view_md', filename=file) }}" class="card">
+                        <div class="card-thumbnail">
+                            <iframe src="{{ url_for('view_md', filename=file) }}" class="card-thumbnail" scrolling="no"></iframe>
+                        </div>
+                        <div class="card-title">{{ file }}</div>
+                    </a>
                 </div>
-		        <div class="card-title">{{ md }}</div>
-		    </a>
-		</div>
-		{% endfor %}
-
-        {% for pdf in pdf_files %}
-        <div class="card-container">
-            <a href="{{ url_for('view_pdf', filename=pdf) }}" class="card">
-                <canvas id="pdf-canvas-{{ loop.index }}" class="card-thumbnail"></canvas>
-                <div class="card-title">{{ pdf }}</div>
-            </a>
-        </div>
-        {% endfor %}        
-
+            {% elif file.endswith('.pdf') %}
+                <div class="card-container">
+                    <a href="{{ url_for('view_pdf', filename=pdf) }}" class="card">
+                        <canvas id="pdf-canvas-{{ loop.index }}" class="card-thumbnail"></canvas>
+                        <div class="card-title">{{ pdf }}</div>
+                    </a>
+                </div>
+            {% endif %}            
+        {% endfor %}
     </div>
 
-    <input type="file" id="file-input" accept="application/pdf,.md" onchange="uploadFile()">
+    <input type="file" id="file-input" accept=".pdf" onchange="uploadFile()">
 	<script src="https://mozilla.github.io/pdf.js/build/pdf.mjs" type="module"></script>
     <script>
         function loadPDFPreview(url, canvasId) {
@@ -74,8 +73,10 @@
         }
 
         document.addEventListener("DOMContentLoaded", function () {
-            {% for pdf in pdf_files %}
-                loadPDFPreview("{{ url_for('serve_file', filename=pdf) }}", "pdf-canvas-{{ loop.index }}");
+            {% for file in files %}
+                {% if file.endswith(".pdf") %}
+                    loadPDFPreview("{{ url_for('serve_file', filename=file) }}", "pdf-canvas-{{ loop.index }}");
+                {% endif %}
             {% endfor %}
         });
 
@@ -94,11 +95,15 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        alert('Archivo subido correctamente');
                         window.location.reload(); 
-                    } 
+                    } else {
+                        alert('Error al subir el archivo');
+                    }
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    alert('Error al subir el archivo');
                 });
             }
         }

@@ -22,12 +22,9 @@ if not os.path.exists(FOLDER):
 
 @app.route('/')
 def index():
-    pdf_files = [f for f in os.listdir(FOLDER) if f.endswith('.pdf')]
-    md_files = [f for f in os.listdir(FOLDER) if f.endswith('.md')]
-
-    return render_template('index.html',
-                           pdf_files=pdf_files,
-                           md_files=md_files)
+    extensions = ('.pdf','.md')
+    files = [f for f in os.listdir(FOLDER) if f.endswith(extensions)]
+    return render_template('index.html', files=files)
 
 
 @app.route('/file/<filename>')
