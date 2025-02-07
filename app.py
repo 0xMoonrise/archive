@@ -3,11 +3,9 @@ import os
 
 from flask import Flask, render_template,\
     send_from_directory, url_for, request, jsonify
-from flask_cors import CORS
 import markdown
 
 app = Flask(__name__)
-CORS(app)
 FOLDER = os.path.join('lectures')
 app.config['UPLOAD_FOLDER'] = FOLDER
 
