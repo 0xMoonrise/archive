@@ -1,30 +1,47 @@
 #!/usr/bin/env python
 import os
 
-from flask import(
+from flask import (
     Flask,
     render_template,
     send_from_directory,
     url_for,
     request,
-    jsonify
+    jsonify,
+    send_file
 )
 import markdown
+from utils.utils import get_image
 
 app = Flask(__name__)
+
 FOLDER = os.path.join('lectures')
+THUMBNAILS = os.path.join('static', 'thumbnails')
+
 app.config['UPLOAD_FOLDER'] = FOLDER
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 60
-extensions = ('.pdf','.md')
+
+extensions = ('.pdf', '.md')
 
 if not os.path.exists(FOLDER):
     os.makedirs(FOLDER)
+
+if not os.path.exists(THUMBNAILS):
+    os.makedirs(THUMBNAILS, exist_ok=True)
 
 
 @app.route('/')
 def index():
     files = [f for f in os.listdir(FOLDER) if f.endswith(extensions)]
     return render_template('index.html', files=files)
+
+
+@app.route('/thumbnail/<filename>')
+def get_thumbnail(filename):
+    image_path = os.path.join(THUMBNAILS, filename)
+    if not os.path.exists(image_path):
+        get_image(filename.replace('.png', '.pdf'), FOLDER, THUMBNAILS, 1)
+    return send_file(image_path, mimetype="image/png")
 
 
 @app.route('/file/<filename>')
@@ -76,6 +93,7 @@ def upload_file():
     if file.filename.endswith(extensions):
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(file_path)
+        get_image(file.filename, FOLDER, THUMBNAILS, 1)
         return jsonify({'success': True,
                         'message': 'File uploaded successfully.',
                         'path': file_path}), 201
