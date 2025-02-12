@@ -37,7 +37,7 @@
             {% elif file.endswith('.pdf') %}
                 <div class="card-container">
                     <a href="{{ url_for('view_pdf', filename=file) }}" class="card">
-                        <img src="{{ url_for('get_thumbnail', filename=file.replace('.pdf', '.png') )}}" class="card-thumbnail">
+                        <img src="{{ url_for('get_thumbnail', filename=file.replace('.pdf', '.webp') )}}" class="card-thumbnail">
                         <div class="card-title">{{ file }}</div>
                     </a>
                 </div>

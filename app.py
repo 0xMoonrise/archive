@@ -41,8 +41,8 @@ def index():
 def get_thumbnail(filename):
     image_path = os.path.join(THUMBNAILS, filename)
     if not os.path.exists(image_path):
-        get_image(filename.replace('.png', '.pdf'), FOLDER, THUMBNAILS, 1)
-    return send_file(image_path, mimetype="image/png")
+        make_image(filename.replace('.webp', '.pdf'), FOLDER, THUMBNAILS, 1)
+    return send_file(image_path, mimetype="image/webp")
 
 
 @app.route('/file/<filename>')
