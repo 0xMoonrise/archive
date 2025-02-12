@@ -11,7 +11,8 @@ from flask import (
     send_file
 )
 import markdown
-from utils.utils import get_image
+from utils.utils import make_image
+from pathlib import Path
 
 app = Flask(__name__)
 
@@ -90,17 +91,16 @@ def upload_file():
         return jsonify({'success': False,
                         'message': 'Invalid file name.'}), 400
 
-    if file.filename.endswith(extensions):
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-        file.save(file_path)
-        get_image(file.filename, FOLDER, THUMBNAILS, 1)
-        return jsonify({'success': True,
-                        'message': 'File uploaded successfully.',
-                        'path': file_path}), 201
+    if not file.filename.endswith(extensions):
+        return jsonify({'success': False,
+                        'message': 'Only PDF files are allowed.'}), 415
 
-    return jsonify({'success': False,
-                    'message': 'Only PDF files are allowed.'}), 415
+    file_path = os.path.join(FOLDER, file.filename)
+    file.save(file_path)
+    make_image(file.filename, FOLDER, THUMBNAILS, 1)
 
+    return jsonify({'success': True,
+                    'message': 'File uploaded successfully.'}), 201
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", debug=True)
+    app.run(host="127.0.0.1", debug=True)
