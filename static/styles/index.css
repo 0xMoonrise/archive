@@ -2,8 +2,8 @@ body {
     font-family: 'Roboto', sans-serif;
     background-color: #121212; 
     color: #e0e0e0; 
-    margin: 0;
-    padding: 20px;
+    padding: 100px;
+    padding-top: 50px;
 }
 
 h1 {
@@ -14,11 +14,10 @@ h1 {
 
 .card-list { 
     display: grid;
-    grid-template-columns: repeat(3, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     gap: 10px; 
     grid-template-rows: auto;
     justify-content: center;
-    padding: 0px 100px;
     align-items: stretch;
 }
 
@@ -28,7 +27,7 @@ h1 {
 
 .card-thumbnail {
     width: 100%;
-   	height: 500px;
+   	height: 400px;
     object-fit: cover;
     border-radius: 5px;
 }
