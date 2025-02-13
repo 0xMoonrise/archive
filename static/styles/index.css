@@ -80,25 +80,45 @@ iframe{
     pointer-events: none;
 }
 
-.content-navigator{
-    background-color: #1e1e1e;   
+.content-navigator {
+    grid-column: 1 / -1;
+    display: flex;           
+    align-items: center;     
+    gap: 10px;               
+    padding: 0px;
+    background-color: #1e1e1e;
     border-radius: 10px;
     height: 80px;
-    grid-column: 1 / -1;
-    display: flex;
-    align-items: center;
-    padding: 10px;
 }
 
-.input-search{
+.input-search {
+    flex: 1;               
+    padding: 10px;
+    margin: 15px;
+    width:100%;
     border-radius: 10px;
-    padding-left: 10px;
-    font-size: 2em;
-    width: 100%;
-    height: 100%;
+    padding-left: 15px;
+    font-size: 1em;
     border: none;
     outline: none;
     color: #e0e0e0;
     background-color: #3d3d3d;
-    display: block;
+    font-size: 2em;
+}
+
+.btn-upload {
+    width: 50px;            
+    height: 50px;
+    cursor: pointer;
+    border: none;
+    background-color: #3d3d3d;
+    color: white;
+    display: flex;
+    margin:15px;
+    margin-left:10px;
+    border-radius: 100%;
+}
+
+.btn-upload:hover {
+    background-color: #e0e0e0;
 }
