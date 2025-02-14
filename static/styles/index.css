@@ -81,6 +81,8 @@ iframe{
 }
 
 .content-navigator {
+    align-items: center;  
+    justify-content: space-between; 
     grid-column: 1 / -1;
     display: flex;           
     align-items: center;     
@@ -121,4 +123,11 @@ iframe{
 
 .btn-upload:hover {
     background-color: #e0e0e0;
+}
+
+.form-input {
+    flex-grow: 1; 
+    height: 100%;
+    display: flex;
+    align-items: center;
 }

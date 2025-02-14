@@ -13,8 +13,10 @@
 
     <div class="card-list">
         <div class="content-navigator">
-            <input type="text" class="input-search">
-            <button class="btn-upload" onclick="document.getElementById('file-input').click()">
+            <form name="search" action="." method="POST" class="form-input">
+                <input class="input-search" name="query">
+            </form>
+             <button class="btn-upload" onclick="document.getElementById('file-input').click()">
                 <svg class="plus-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
                     <path d="M12 4V12M12 12V20M12 12H4M12 12H20" stroke="#bb86fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -43,31 +45,6 @@
     </div>
 
     <input type="file" id="file-input" accept=".pdf,.md" onchange="uploadFile()">
-    <script>
-        function uploadFile() {
-            const fileInput = document.getElementById('file-input');
-            const file = fileInput.files[0];
-
-            if (file) {
-                const formData = new FormData();
-                formData.append('file', file);
-
-                fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.reload(); 
-                    } 
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            }
-        }
-
-    </script>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </body>
 </html>

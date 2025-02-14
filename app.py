@@ -30,10 +30,15 @@ if not os.path.exists(FOLDER):
 if not os.path.exists(THUMBNAILS):
     os.makedirs(THUMBNAILS, exist_ok=True)
 
+files = [f for f in os.listdir(FOLDER) if f.endswith(extensions)]
 
-@app.route('/')
+
+@app.route('/', methods=['POST', 'GET'])
 def index():
-    files = [f for f in os.listdir(FOLDER) if f.endswith(extensions)]
+    print(request.form.get("query"))
+    if request.form.get("query") == '':
+        return jsonify({'success': True,
+                        'message': 'The message has been recived.'}), 200
     return render_template('index.html', files=files)
 
 
@@ -101,6 +106,7 @@ def upload_file():
 
     return jsonify({'success': True,
                     'message': 'File uploaded successfully.'}), 201
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True)
