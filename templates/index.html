@@ -10,7 +10,6 @@
 </head>
 <body>
     <h1>Moonrise's Archive</h1>
-
     <div class="card-list">
         <div class="content-navigator">
             <form name="search" action="." method="POST" class="form-input">
@@ -22,29 +21,9 @@
                 </svg>
             </button>
         </div>
-
-        {% for file in files %}
-            {% if file.endswith('.md') %}
-                <div class="card-container">
-                    <a href="{{ url_for('view_md', filename=file) }}" class="card">
-                        <div class="card-thumbnail">
-                            <iframe src="{{ url_for('view_md', filename=file) }}" class="card-thumbnail" scrolling="no"></iframe>
-                        </div>
-                        <div class="card-title">{{ file }}</div>
-                    </a>
-                </div>
-            {% elif file.endswith('.pdf') %}
-                <div class="card-container">
-                    <a href="{{ url_for('view_pdf', filename=file) }}" class="card">
-                        <img src="{{ url_for('get_thumbnail', filename=file.replace('.pdf', '.webp') )}}" class="card-thumbnail">
-                        <div class="card-title">{{ file }}</div>
-                    </a>
-                </div>
-            {% endif %}            
-        {% endfor %}
     </div>
-
     <input type="file" id="file-input" accept=".pdf,.md" onchange="uploadFile()">
-    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/index.js') }}">
+    </script>
 </body>
 </html>

@@ -8,7 +8,8 @@ from flask import (
     url_for,
     request,
     jsonify,
-    send_file
+    send_file,
+    redirect
 )
 import markdown
 from utils.utils import make_image
@@ -32,14 +33,20 @@ if not os.path.exists(THUMBNAILS):
 
 files = [f for f in os.listdir(FOLDER) if f.endswith(extensions)]
 
+@app.route('/get_files', methods=['POST', 'GET'])
+def get_files():
+	if request.method == "POST":
+		query = request.form.get("query")
+		if query:
+			query = [f for f in files if query in f]
+			return jsonify({"files":query }), 200
+		return jsonify({'success': False,
+						'message': 'The query has not been successful'}), 400
+	return jsonify({"files":files}), 200
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/')
 def index():
-    print(request.form.get("query"))
-    if request.form.get("query") == '':
-        return jsonify({'success': True,
-                        'message': 'The message has been recived.'}), 200
-    return render_template('index.html', files=files)
+    return render_template('index.html')
 
 
 @app.route('/thumbnail/<filename>')
