@@ -131,3 +131,31 @@ iframe{
     display: flex;
     align-items: center;
 }
+
+.pagination-section{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+	position: relative;
+	margin: 10px;
+}
+
+.pagination-button{
+	margin: 10px;
+	border-radius: 100%;
+	border: none;
+	cursor: pointer;
+	width: 40px;
+	height: 40px;
+	aspect-ratio: 1/1;
+	background-color: #3d3d3d;
+	color: #bb86fc;
+	font-weight: bold;
+	font-size: 1em;
+	text-align: center;
+}
+
+.pagination-button:hover {
+    background-color: #e0e0e0;
+    color: #9b59b6;
+}

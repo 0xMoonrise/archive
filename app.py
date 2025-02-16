@@ -12,7 +12,7 @@ from flask import (
     redirect
 )
 import markdown
-from utils.utils import make_image
+from utils.utils import make_image, chunkify
 from pathlib import Path
 
 app = Flask(__name__)
@@ -32,17 +32,22 @@ if not os.path.exists(THUMBNAILS):
     os.makedirs(THUMBNAILS, exist_ok=True)
 
 files = [f for f in os.listdir(FOLDER) if f.endswith(extensions)]
+#files = {i:files[n:3+n] for i,n in enumerate(range(0, len(files), 3))}
 
-@app.route('/get_files', methods=['POST', 'GET'])
-def get_files():
+@app.route('/get_files/<int:index>', methods=['POST', 'GET'])
+def get_files(index):
+	splitter = 4
+	archive = chunkify(files, splitter)
 	if request.method == "POST":
 		query = request.form.get("query")
 		if query:
-			query = [f for f in files if query in f]
-			return jsonify({"files":query }), 200
-		return jsonify({'success': False,
-						'message': 'The query has not been successful'}), 400
-	return jsonify({"files":files}), 200
+			archive = chunkify([f for f in files if query in f], splitter)
+			return jsonify({"files":archive.get(index),
+							"chunks":len(archive)}), 200
+		return jsonify({"files":archive.get(index),
+						"chunks":len(archive)}), 200
+	return jsonify({"files":archive.get(index),
+					"chunks":len(archive)}), 200
 
 @app.route('/')
 def index():

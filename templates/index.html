@@ -10,7 +10,9 @@
 </head>
 <body>
     <h1>Moonrise's Archive</h1>
-    <div class="card-list">
+	<section class="pagination-section">
+	</section>
+    <section class="card-list">
         <div class="content-navigator">
             <form name="search" action="." method="POST" class="form-input">
                 <input class="input-search" name="query">
@@ -21,7 +23,7 @@
                 </svg>
             </button>
         </div>
-    </div>
+    </section>
     <input type="file" id="file-input" accept=".pdf,.md" onchange="uploadFile()">
     <script src="{{ url_for('static', filename='js/index.js') }}">
     </script>

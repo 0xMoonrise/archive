@@ -20,3 +20,6 @@ def make_image(file, from_path, to_path, page):
         if image:
             image[0].save(image_name, "WEBP")
 
+
+def chunkify(lst, splitter):
+	return {i:lst[n:splitter + n] for i, n in enumerate(range(0, len(lst), splitter), 1)}

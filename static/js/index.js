@@ -1,3 +1,12 @@
+//My code is crap but is my code
+
+const form = document.querySelector(".form-input");
+
+form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    sendData();
+});
+
 function uploadFile()
 {
     const fileInput = document.getElementById('file-input');
@@ -27,14 +36,14 @@ function uploadFile()
 
 async function sendData()
 {
-    const formData = new FormData(form);
+    const search = new FormData(form);
 
     try
     {
-	    const response = await fetch(`${window.location.origin}/get_files`,
+	    const response = await fetch(`${window.location.origin}/get_files/1`,
 	    {
 	        method: "POST",
-	        body: formData,
+	        body: search,
 	    });
 
 	    archive = await response.json();
@@ -42,24 +51,17 @@ async function sendData()
 		const card_list = document.querySelector(".card-list");
 		const cards = card_list.querySelectorAll(".card-container");
 		cards.forEach(card => card.remove());
-
+		// Loaded from search
 		archive.files.forEach(filename => {
     		make_cardElement(filename);
 		});
+		make_paginationSection(archive.chunks);
     }
     catch (e)
     {
         console.error(e);
     }
 }
-
-const form = document.querySelector(".form-input");
-
-form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    sendData();
-});
-
 
 function make_cardElement(filename)
 {
@@ -104,19 +106,72 @@ function make_cardElement(filename)
 	cardList.append(card_container);
 }
 
+function make_paginationSection(n_button)
+{
+	const pagination_section = document.querySelector(".pagination-section");
+	pagination_section.innerHTML = "";
+	top_button = (n_button <= 5) ? n_button : 5
+	
+	for(var i = 0; i < top_button; i++){
+		let button = document.createElement("button");
+		button.innerText = i + 1;
+		button.classList.add("pagination-button");
+		button.addEventListener("click", function() {
+   			 button_event(this);
+		});
+		pagination_section.append(button);
+    }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     try
     {
-        const response = await fetch("/get_files");
+        const response = await fetch(`/get_files/1`);
         const archive = await response.json();
-
+		//Loaded from all
         archive.files.forEach(filename => {
             make_cardElement(filename);
         });
-
+		make_paginationSection(archive.chunks);
     }
     catch (error)
     {
         console.error(error);
     }
 });
+
+async function button_event(e) {
+    const input_search = document.querySelector(".input-search");
+    let response;
+    try {
+        if (input_search.value) {
+            response = await fetch(`${window.location.origin}/get_files/${e.innerText}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `query=${input_search.value}`,
+            });
+        } else {
+            response = await fetch(`/get_files/${e.innerText}`);
+        }
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+
+        const archive = await response.json();
+
+        const card_list = document.querySelector(".card-list");
+        const cards = card_list.querySelectorAll(".card-container");
+
+        cards.forEach(card => card.remove());
+
+        archive.files.forEach(filename => {
+            make_cardElement(filename);
+        });
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
