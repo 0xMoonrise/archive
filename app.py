@@ -36,7 +36,7 @@ files = [f for f in os.listdir(FOLDER) if f.endswith(extensions)]
 
 @app.route('/get_files/<int:index>', methods=['POST', 'GET'])
 def get_files(index):
-	splitter = 4
+	splitter = 8
 	archive = chunkify(files, splitter)
 	if request.method == "POST":
 		query = request.form.get("query")

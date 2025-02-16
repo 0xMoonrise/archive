@@ -106,20 +106,81 @@ function make_cardElement(filename)
 	cardList.append(card_container);
 }
 
-function make_paginationSection(n_button)
+function make_paginationSection(n_button, current=1)
 {
-	const pagination_section = document.querySelector(".pagination-section");
-	pagination_section.innerHTML = "";
-	top_button = (n_button <= 5) ? n_button : 5
-	
-	for(var i = 0; i < top_button; i++){
-		let button = document.createElement("button");
-		button.innerText = i + 1;
-		button.classList.add("pagination-button");
-		button.addEventListener("click", function() {
-   			 button_event(this);
-		});
-		pagination_section.append(button);
+    const pagination_section = document.querySelector(".pagination-section");
+    pagination_section.innerHTML = "";
+
+    const max_buttons = 5;
+    let start, end;
+
+    if(n_button <= max_buttons)
+    {
+        start = 1;
+        end = n_button;
+    }
+    else
+    {
+        if (current <= 3) {
+            start = 1;
+            end = max_buttons - 1;
+        } else if (current >= n_button - 2) {
+            start = n_button - (max_buttons - 2);
+            end = n_button;
+        } else {
+            start = current - 1;
+            end = current + 1;
+        }
+    }
+
+    let button1 = document.createElement("button");
+    button1.innerText = 1;
+    button1.classList.add("pagination-button");
+    if(current === 1) button1.classList.add("active");
+    button1.addEventListener("click", function () {
+        make_paginationSection(n_button, 1);
+        button_event(this);
+    });
+    pagination_section.append(button1);
+
+    if(start > 2) {
+        let dots = document.createElement("button");
+        dots.classList.add("pagination-button");
+        dots.innerText = "...";
+        pagination_section.append(dots);
+    }
+
+    for(let i = start; i <= end; i++) {
+        if (i === 1 || i === n_button) continue;
+
+        let button = document.createElement("button");
+        button.innerText = i;
+        button.classList.add("pagination-button");
+        if (i === current) button.classList.add("active");
+        button.addEventListener("click", function () {
+            make_paginationSection(n_button, i);
+            button_event(this);
+        });
+        pagination_section.append(button);
+    }
+
+    if(end < n_button - 1) {
+		let dots = document.createElement("button");
+		dots.classList.add("pagination-button");
+        dots.innerText = "...";
+        pagination_section.append(dots);
+    }
+
+    if(n_button > 1) {
+        let buttonLast = document.createElement("button");
+        buttonLast.innerText = n_button;
+        buttonLast.classList.add("pagination-button");
+        if (current === n_button) buttonLast.classList.add("active");
+        buttonLast.addEventListener("click", function () {
+            make_paginationSection(n_button, n_button);
+            button_event(this);
+        });
+        pagination_section.append(buttonLast);
     }
 }
 
