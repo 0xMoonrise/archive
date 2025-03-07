@@ -110,7 +110,7 @@ function make_paginationSection(n_button, current=1)
 {
     const pagination_section = document.querySelector(".pagination-section");
     pagination_section.innerHTML = "";
-
+    const currentColor = "#e0e0e0"
     const max_buttons = 5;
     let start, end;
 
@@ -136,7 +136,10 @@ function make_paginationSection(n_button, current=1)
     let button1 = document.createElement("button");
     button1.innerText = 1;
     button1.classList.add("pagination-button");
-    if(current === 1) button1.classList.add("active");
+    if(current === 1){
+        button1.classList.add("active");
+        button1.style.backgroundColor = currentColor;
+    }
     button1.addEventListener("click", function () {
         make_paginationSection(n_button, 1);
         button_event(this);
@@ -152,11 +155,13 @@ function make_paginationSection(n_button, current=1)
 
     for(let i = start; i <= end; i++) {
         if (i === 1 || i === n_button) continue;
-
         let button = document.createElement("button");
         button.innerText = i;
         button.classList.add("pagination-button");
-        if (i === current) button.classList.add("active");
+        if (i === current){
+             button.classList.add("active");
+             button.style.backgroundColor = currentColor;
+        }
         button.addEventListener("click", function () {
             make_paginationSection(n_button, i);
             button_event(this);
