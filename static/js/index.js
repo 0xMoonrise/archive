@@ -180,7 +180,10 @@ function make_paginationSection(n_button, current=1)
         let buttonLast = document.createElement("button");
         buttonLast.innerText = n_button;
         buttonLast.classList.add("pagination-button");
-        if (current === n_button) buttonLast.classList.add("active");
+        if (current === n_button){
+            buttonLast.classList.add("active");
+            buttonLast.style.backgroundColor = currentColor;
+        }
         buttonLast.addEventListener("click", function () {
             make_paginationSection(n_button, n_button);
             button_event(this);
