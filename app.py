@@ -14,6 +14,10 @@ from flask import (
 import markdown
 from utils.utils import make_image, pages
 from pathlib import Path
+from db import crud
+from sqlalchemy.orm import Session
+from db.db_connection import SessionLocal
+from io import BytesIO
 
 app = Flask(__name__)
 
@@ -35,6 +39,13 @@ if not os.path.exists(THUMBNAILS):
 
 files = [f for f in os.listdir(DIR) if f.endswith(extensions)]
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 @app.route('/delete', methods=['POST'])
 def delete_file():
     data = request.get_json()
@@ -55,6 +66,11 @@ def delete_file():
         return jsonify({'success': False,
                 'message': 'File not found.'}), 400
 
+@app.route('/get_file')
+def get_file():
+    db = next(get_db())
+    pdf = crud.get_pdf_by_id(db, pdf_id=1)
+    return send_file(BytesIO(pdf.data), mimetype="application/pdf")
 
 @app.route('/get_files/<int:index>', methods=['POST', 'GET'])
 def get_files(index):
@@ -65,7 +81,6 @@ def get_files(index):
 	if request.method == "POST":
 
 		query = request.form.get("query")
-
 		if query:
 			archive = pages([f for f in files if query in f], splitter)
 			return jsonify({"files" : archive.get(index),
