@@ -35,6 +35,27 @@ if not os.path.exists(THUMBNAILS):
 
 files = [f for f in os.listdir(DIR) if f.endswith(extensions)]
 
+@app.route('/delete', methods=['POST'])
+def delete_file():
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"error": "No JSON data received"}), 400
+
+    file = data.get('file').split('.')[0]
+    file_path = os.path.join(DIR, f"{file}.pdf")
+    thum_path = os.path.join(THUMBNAILS, f"{file}.webp")
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        os.remove(thum_path)
+        return jsonify({'success': True,
+                        'message': 'The file has been successfully deleted.'}), 200
+    else:
+        return jsonify({'success': False,
+                'message': 'File not found.'}), 400
+
+
 @app.route('/get_files/<int:index>', methods=['POST', 'GET'])
 def get_files(index):
 
@@ -127,4 +148,4 @@ def upload_file():
 
 
 if __name__ == '__main__':
-    app.run(host=LISTEN_HOST, debug=True)
+    app.run(host=LISTEN_HOST, port=LISTEN_PORT, debug=True)

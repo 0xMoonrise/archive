@@ -1,0 +1,34 @@
+version: '3'
+services:
+  db:
+    image: postgres:13
+    container_name: archive_db
+    environment:
+      - POSTGRES_USER=postgresql
+      - POSTGRES_PASSWORD=postgresql
+      - POSTGRES_DB=archive
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - archive_net
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: archive
+    environment:
+      - DB_HOST=db
+      - DB_USER=postgresql
+      - DB_PASS=postgresql
+      - DB_NAME=archive
+    ports:
+      - 5000:5000
+    depends_on:
+      - db
+    networks:
+      - archive_net
+
+networks:
+  archive_net:
+    driver: bridge
