@@ -18,8 +18,10 @@ from pathlib import Path
 app = Flask(__name__)
 
 THUMBNAILS = os.path.join('static', 'thumbnails')
-DIR = os.environ.get('LECTURES_DIR') if os.environ.get('LECTURES_DIR') else 'lectures'
-LISTEN_HOST = os.environ.get('LISTEN_HOST') if os.environ.get('LISTEN_HOST') else '127.0.01'
+
+DIR         = os.environ.get('LECTURES_DIR', 'lectures')
+LISTEN_HOST = os.environ.get('LISTEN_HOST', '127.0.0.1')
+LISTEN_PORT = os.environ.get('LISTEN_PORT', '5000')
 
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 60
 
