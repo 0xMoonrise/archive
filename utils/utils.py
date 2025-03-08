@@ -13,7 +13,7 @@ def is_valid_file_ext(string):
 
 
 def make_image(file, from_path, to_path, page):
-    if file.endswith('.pdf'):
+    if is_valid_file_ext(file):
         pdf_path = os.path.join(from_path, file)
         image_name = os.path.join(to_path, f"{os.path.splitext(file)[0]}.webp")
         image = convert_from_path(pdf_path, first_page=page, last_page=page)
@@ -21,5 +21,5 @@ def make_image(file, from_path, to_path, page):
             image[0].save(image_name, "WEBP")
 
 
-def chunkify(lst, splitter):
-	return {i:lst[n:splitter + n] for i, n in enumerate(range(0, len(lst), splitter), 1)}
+def pages(pages, splitter):
+	return {i:pages[n:splitter + n] for i, n in enumerate(range(0, len(pages), splitter), 1)}
