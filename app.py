@@ -19,7 +19,7 @@ app = Flask(__name__)
 
 THUMBNAILS = os.path.join('static', 'thumbnails')
 DIR = os.environ.get('LECTURES_DIR') if os.environ.get('LECTURES_DIR') else 'lectures'
-
+LISTEN_HOST = os.environ.get('LISTEN_HOST') if os.environ.get('LISTEN_HOST') else '127.0.01'
 
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 60
 
@@ -46,10 +46,10 @@ def get_files(index):
 		if query:
 			archive = pages([f for f in files if query in f], splitter)
 			return jsonify({"files" : archive.get(index),
-							"chunks": len(archive)}), 200
+							"pages": len(archive)}), 200
 
 	return jsonify({"files" : archive.get(index),
-					"chunks": len(archive)}), 200
+					"pages": len(archive)}), 200
 
 @app.route('/')
 def index():
@@ -125,4 +125,4 @@ def upload_file():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", debug=True)
+    app.run(host=LISTEN_HOST, debug=True)

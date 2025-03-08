@@ -55,7 +55,7 @@ async function sendData()
 		archive.files.forEach(filename => {
     		make_cardElement(filename);
 		});
-		make_paginationSection(archive.chunks);
+		make_paginationSection(archive.pages);
     }
     catch (e)
     {
@@ -198,7 +198,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         archive.files.forEach(filename => {
             make_cardElement(filename);
         });
-		make_paginationSection(archive.chunks);
+		make_paginationSection(archive.pages);
     }
     catch (error)
     {
