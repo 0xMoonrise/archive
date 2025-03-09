@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, LargeBinary
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, LargeBinary, event
 from datetime import datetime
-from .db_connection import Base
+from .database import Base
 
 class PDFFile(Base):
     __tablename__ = "pdf_files"
@@ -17,3 +17,8 @@ class PDFFile(Base):
 
     def __repr__(self):
         return f"<PDFFile(filename={self.filename}, editorial={self.editorial}, favorite={self.favorite})>"
+
+def after_insert(mapper, connection, target):
+    print(f"Se insertó un nuevo registro en {target}")
+
+event.listen(PDFFile, 'after_insert', after_insert)

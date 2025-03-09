@@ -1,4 +1,3 @@
-version: '3'
 services:
   db:
     image: postgres:13
@@ -20,10 +19,7 @@ services:
       dockerfile: Dockerfile
     container_name: archive
     environment:
-      - DB_HOST=db
-      - DB_USER=postgresql
-      - DB_PASS=postgresql
-      - DB_NAME=archive
+      - DB_URI=postgresql://postgresql:postgresql@db:5432/archive
     ports:
       - 5000:5000
     depends_on:

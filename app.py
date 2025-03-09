@@ -12,16 +12,17 @@ from flask import (
     redirect
 )
 import markdown
-from utils.utils import make_image, pages
+from utils.utils import make_image, pages, make_thumbnail
 from pathlib import Path
 from db import crud
+from db.database import SessionLocal
 from sqlalchemy.orm import Session
-from db.db_connection import SessionLocal
 from io import BytesIO
+from math import ceil
 
 app = Flask(__name__)
 
-THUMBNAILS = os.path.join('static', 'thumbnails')
+THUMBNAILS  = os.path.join('static', 'thumbnails')
 
 DIR         = os.environ.get('LECTURES_DIR', 'lectures')
 LISTEN_HOST = os.environ.get('LISTEN_HOST', '127.0.0.1')
@@ -38,7 +39,7 @@ if not os.path.exists(THUMBNAILS):
     os.makedirs(THUMBNAILS, exist_ok=True)
 
 files = [f for f in os.listdir(DIR) if f.endswith(extensions)]
-
+files_ = None
 def get_db():
     db = SessionLocal()
     try:
@@ -66,28 +67,29 @@ def delete_file():
         return jsonify({'success': False,
                 'message': 'File not found.'}), 400
 
-@app.route('/get_file')
-def get_file():
-    db = next(get_db())
-    pdf = crud.get_pdf_by_id(db, pdf_id=1)
-    return send_file(BytesIO(pdf.data), mimetype="application/pdf")
 
 @app.route('/get_files/<int:index>', methods=['POST', 'GET'])
 def get_files(index):
+    db = next(get_db())
 
-	splitter = 8
-	archive = pages(files, splitter)
+    splitter = 8
 
-	if request.method == "POST":
+    match request.method: 
+        case "POST":
+            query = request.form.get("query")
+            pager = ceil(crud.count_by_name(db, query)/splitter)
+            archive = crud.get_by_name(db, 
+                                       query,
+                                       offset=splitter*(index-1),
+                                       limit=splitter)
+        case "GET":
+            pager = ceil(crud.count_files(db)/splitter)
+            archive = crud.get_filenames(db,
+                                         offset=splitter*(index-1),
+                                         limit=splitter)
 
-		query = request.form.get("query")
-		if query:
-			archive = pages([f for f in files if query in f], splitter)
-			return jsonify({"files" : archive.get(index),
-							"pages": len(archive)}), 200
-
-	return jsonify({"files" : archive.get(index),
-					"pages": len(archive)}), 200
+    return jsonify({"files" : archive,
+                    "pages": pager}), 200
 
 @app.route('/')
 def index():
@@ -96,18 +98,19 @@ def index():
 
 @app.route('/thumbnail/<filename>')
 def get_thumbnail(filename):
-    image_path = os.path.join(THUMBNAILS, filename)
-
-    if not os.path.exists(image_path):
-        make_image(filename.replace('.webp', '.pdf'), DIR, THUMBNAILS, 1)
-
-    return send_file(image_path, mimetype="image/webp")
+    db = next(get_db())
+    file = crud.get_file_by_name(db, filename.replace('webp', 'pdf'))
+    path = os.path.join('static', 'thumbnails', filename)
+    if not os.path.exists(path):
+        make_thumbnail(BytesIO(file.data), path, 1)
+    return send_file(path, mimetype="image/webp")
 
 
 @app.route('/file/<filename>')
 def serve_file(filename):
-    return send_from_directory(DIR, filename)
-
+    db = next(get_db())
+    pdf = crud.get_file_by_name(db, filename)
+    return send_file(BytesIO(pdf.data), mimetype="application/pdf")
 
 @app.route('/view_pdf/<filename>')
 def view_pdf(filename):

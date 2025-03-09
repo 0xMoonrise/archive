@@ -1,7 +1,7 @@
 import os
 
 import re
-from pdf2image import convert_from_path
+from pdf2image import convert_from_path, convert_from_bytes
 from tempfile import NamedTemporaryFile
 
 
@@ -20,6 +20,11 @@ def make_image(file, from_path, to_path, page):
         if image:
             image[0].save(image_name, "WEBP")
 
+
+def make_thumbnail(file, path, page):
+    image = convert_from_bytes(file.read(), first_page=page, last_page=page)
+    if image:
+        image[0].save(path, "WEBP")
 
 def pages(pages, splitter):
 	return {i:pages[n:splitter + n] for i, n in enumerate(range(0, len(pages), splitter), 1)}
