@@ -99,18 +99,26 @@ def index():
 @app.route('/thumbnail/<filename>')
 def get_thumbnail(filename):
     db = next(get_db())
-    file = crud.get_file_by_name(db, filename.replace('webp', 'pdf'))
-    path = os.path.join('static', 'thumbnails', filename)
-    if not os.path.exists(path):
-        make_thumbnail(BytesIO(file.data), path, 1)
-    return send_file(path, mimetype="image/webp")
+    print(filename.replace('webp', 'pdf'))
+    image = crud.get_thumbnail_by_name(db, filename)
+    if image:
+        print(f"Image found: {image.filename}")
+        return send_file(BytesIO(image.thumbnail_image), mimetype="image/webp")
+    else:
+        return "Image not found", 404
 
 
 @app.route('/file/<filename>')
 def serve_file(filename):
     db = next(get_db())
-    pdf = crud.get_file_by_name(db, filename)
-    return send_file(BytesIO(pdf.data), mimetype="application/pdf")
+    print(filename)
+    file = crud.get_file_by_name(db, filename)
+    if file:
+        print(f"File found: {file.filename}")
+        return send_file(BytesIO(file.data), mimetype="application/pdf")
+    else:
+        return "File not found", 404
+    
 
 @app.route('/view_pdf/<filename>')
 def view_pdf(filename):

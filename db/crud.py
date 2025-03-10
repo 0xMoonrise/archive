@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from .models import PDFFile
 
 def get_by_id(db, pdf_id):
@@ -29,5 +30,6 @@ def get_file_by_name(db, name):
     return db.query(PDFFile).filter(PDFFile.filename == name).first()
 
 def get_thumbnail_by_name(db, name):
-    return db.query(PDFFile).filter(PDFFile.filename == name).thumbnail_image
+    name = name.rsplit('.', 1)[0] #Without extension
+    return db.query(PDFFile).filter(PDFFile.filename.like(f"{name}%")).first()
 #thumbnail_image

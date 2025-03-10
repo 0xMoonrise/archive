@@ -7,6 +7,6 @@ CREATE TABLE pdf_schema.pdf_files (
     cover_page INT NOT NULL DEFAULT 1 CHECK (cover_page >= 1),
     data BYTEA NOT NULL,
     favorite BOOLEAN NOT NULL DEFAULT false,
-    thumbnail_image TEXT,
+    thumbnail_image BYTEA DEFAULT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
