@@ -19,7 +19,7 @@ services:
       dockerfile: Dockerfile
     container_name: archive
     environment:
-      - DB_URI=postgresql://postgresql:postgresql@db:5432/archive
+      - DB_URI=postgresql+psycopg2://postgresql:postgresql@db:5432/archive
     ports:
       - 5000:5000
     depends_on:
