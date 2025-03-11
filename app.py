@@ -9,7 +9,8 @@ from flask import (
     request,
     jsonify,
     send_file,
-    redirect
+    redirect,
+    Response
 )
 import markdown
 from utils.utils import make_image, pages, make_thumbnail
@@ -22,9 +23,7 @@ from math import ceil
 
 app = Flask(__name__)
 
-THUMBNAILS  = os.path.join('static', 'thumbnails')
-
-DIR         = os.environ.get('LECTURES_DIR', 'lectures')
+THUMBNAILS_DIR = os.path.join('static', 'thumbnails')
 LISTEN_HOST = os.environ.get('LISTEN_HOST', '127.0.0.1')
 LISTEN_PORT = os.environ.get('LISTEN_PORT', '5000')
 
@@ -32,40 +31,12 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 60
 
 extensions = ('.pdf', '.md')
 
-if not os.path.exists(DIR):
-    os.makedirs(DIR)
-
-if not os.path.exists(THUMBNAILS):
-    os.makedirs(THUMBNAILS, exist_ok=True)
-
-files = [f for f in os.listdir(DIR) if f.endswith(extensions)]
-files_ = None
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
-
-@app.route('/delete', methods=['POST'])
-def delete_file():
-    data = request.get_json()
-
-    if not data:
-        return jsonify({"error": "No JSON data received"}), 400
-
-    file = data.get('file').split('.')[0]
-    file_path = os.path.join(DIR, f"{file}.pdf")
-    thum_path = os.path.join(THUMBNAILS, f"{file}.webp")
-
-    if os.path.exists(file_path):
-        os.remove(file_path)
-        os.remove(thum_path)
-        return jsonify({'success': True,
-                        'message': 'The file has been successfully deleted.'}), 200
-    else:
-        return jsonify({'success': False,
-                'message': 'File not found.'}), 400
 
 
 @app.route('/get_files/<int:index>', methods=['POST', 'GET'])
@@ -76,6 +47,7 @@ def get_files(index):
 
     match request.method: 
         case "POST":
+            # This retrieves all the necessary files from the database based on the query
             query = request.form.get("query")
             pager = ceil(crud.count_by_name(db, query)/splitter)
             archive = crud.get_by_name(db, 
@@ -83,6 +55,7 @@ def get_files(index):
                                        offset=splitter*(index-1),
                                        limit=splitter)
         case "GET":
+            # This retrieves all the necessary files from the database
             pager = ceil(crud.count_files(db)/splitter)
             archive = crud.get_filenames(db,
                                          offset=splitter*(index-1),
@@ -98,24 +71,16 @@ def index():
 
 @app.route('/thumbnail/<filename>')
 def get_thumbnail(filename):
-    db = next(get_db())
-    print(filename.replace('webp', 'pdf'))
-    image = crud.get_thumbnail_by_name(db, filename)
-    if image:
-        print(f"Image found: {image.filename}")
-        return send_file(BytesIO(image.thumbnail_image), mimetype="image/webp")
-    else:
-        return "Image not found", 404
+    return send_from_directory(THUMBNAILS_DIR, filename)
 
 
 @app.route('/file/<filename>')
 def serve_file(filename):
     db = next(get_db())
-    print(filename)
     file = crud.get_file_by_name(db, filename)
     if file:
         print(f"File found: {file.filename}")
-        return send_file(BytesIO(file.data), mimetype="application/pdf")
+        return Response(file.data, mimetype="application/pdf")
     else:
         return "File not found", 404
     
@@ -165,13 +130,28 @@ def upload_file():
         return jsonify({'success': False,
                         'message': 'Only PDF files are allowed.'}), 415
 
-    file_path = os.path.join(DIR, file.filename)
-    file.save(file_path)
-    make_image(file.filename, DIR, THUMBNAILS, 1)
+    #file_path = os.path.join(DIR, file.filename)
+    #file.save(file_path)
+    #make_image(file.filename, DIR, THUMBNAILS, 1)
 
     return jsonify({'success': True,
                     'message': 'File uploaded successfully.'}), 201
 
 
 if __name__ == '__main__':
+
+    db = next(get_db())
+    print("[+] Dumping thumbnails images...")
+
+    THUMBNAILS_DIR = os.path.join('static', 'thumbnails')
+    os.makedirs(THUMBNAILS_DIR, exist_ok=True)
+    
+    for image, filename in crud.get_all_images(db):
+        if image is None:
+            print(f"[-] {filename} image not found... skiping...")
+            continue
+        #static/thumbnails/ or maybe else where...
+        with open(os.path.join(THUMBNAILS_DIR, filename.replace('pdf', 'webp')), "wb") as f:
+            f.write(image)
+    print("[+] Dumping thumbnails complete!")
     app.run(host=LISTEN_HOST, port=LISTEN_PORT, debug=True)

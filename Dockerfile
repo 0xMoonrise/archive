@@ -16,4 +16,4 @@ RUN python -m pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 5000
 
-CMD ["gunicorn", "-w", "2", "--timeout", "120", "--log-level=debug", "--bind", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "-w", "4", "-k", "gevent" ,"--timeout", "120", "--log-level=debug", "--bind", "0.0.0.0:5000", "app:app"]

@@ -16,9 +16,5 @@ class PDFFile(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     def __repr__(self):
-        return f"<PDFFile(filename={self.filename}, editorial={self.editorial}, favorite={self.favorite})>"
+        return f"<PDFFile(id={self.id}, filename={self.filename})>"
 
-def after_insert(mapper, connection, target):
-    print(f"Se insertó un nuevo registro en {target}")
-
-event.listen(PDFFile, 'after_insert', after_insert)

@@ -5,6 +5,10 @@ from .models import PDFFile
 def get_by_id(db, pdf_id):
     return db.query(PDFFile).filter(PDFFile.id == pdf_id).first()
 
+def get_all_images(db):
+    return db.query(PDFFile.thumbnail_image,
+                    PDFFile.filename).filter(PDFFile.filename.like("%pdf")).all()
+    
 def get_filenames(db, offset=0, limit=8):
     return [filename for (filename,) in db.query(PDFFile.filename)
                                           .offset(offset)
