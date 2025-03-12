@@ -29,6 +29,7 @@ LISTEN_PORT = os.environ.get('LISTEN_PORT', '5000')
 
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 60
 
+os.makedirs(THUMBNAILS_DIR, exist_ok=True)
 extensions = ('.pdf', '.md')
 
 def get_db():
@@ -38,6 +39,19 @@ def get_db():
     finally:
         db.close()
 
+db = next(get_db())
+
+
+print("[+] Dumping thumbnails images...")
+for image, filename in crud.get_all_images(db):
+    if image is None:
+        print(f"[-] {filename} image not found... skiping...")
+        continue
+    #static/thumbnails/ or maybe else where...
+    with open(os.path.join(THUMBNAILS_DIR, filename.replace('pdf', 'webp')), "wb") as f:
+        f.write(image)
+print("[+] Dumping thumbnails complete!")
+
 
 @app.route('/get_files/<int:index>', methods=['POST', 'GET'])
 def get_files(index):
@@ -45,12 +59,12 @@ def get_files(index):
 
     splitter = 8
 
-    match request.method: 
+    match request.method:
         case "POST":
             # This retrieves all the necessary files from the database based on the query
             query = request.form.get("query")
             pager = ceil(crud.count_by_name(db, query)/splitter)
-            archive = crud.get_by_name(db, 
+            archive = crud.get_by_name(db,
                                        query,
                                        offset=splitter*(index-1),
                                        limit=splitter)
@@ -83,7 +97,7 @@ def serve_file(filename):
         return Response(file.data, mimetype="application/pdf")
     else:
         return "File not found", 404
-    
+
 
 @app.route('/view_pdf/<filename>')
 def view_pdf(filename):
@@ -139,19 +153,4 @@ def upload_file():
 
 
 if __name__ == '__main__':
-
-    db = next(get_db())
-    print("[+] Dumping thumbnails images...")
-
-    THUMBNAILS_DIR = os.path.join('static', 'thumbnails')
-    os.makedirs(THUMBNAILS_DIR, exist_ok=True)
-    
-    for image, filename in crud.get_all_images(db):
-        if image is None:
-            print(f"[-] {filename} image not found... skiping...")
-            continue
-        #static/thumbnails/ or maybe else where...
-        with open(os.path.join(THUMBNAILS_DIR, filename.replace('pdf', 'webp')), "wb") as f:
-            f.write(image)
-    print("[+] Dumping thumbnails complete!")
     app.run(host=LISTEN_HOST, port=LISTEN_PORT, debug=True)
