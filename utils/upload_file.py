@@ -13,12 +13,16 @@ db_params = {
 conn = None
 path = '/opt/lectures/'
 pdf_query = """
-INSERT INTO pdf_schema.pdf_files (filename, data, editorial, cover_page, thumbnail_image)
+INSERT INTO archive_schema.archive (filename,
+                                    file,
+                                    editorial,
+                                    cover_page,
+                                    thumbnail_image)
 VALUES (%s, %s, %s, %s, %s)
 """
 
 md_query = """
-INSERT INTO pdf_schema.pdf_files (filename, data, editorial)
+INSERT INTO archive_schema.archive (filename, file, editorial)
 VALUES (%s, %s, %s)
 """
 

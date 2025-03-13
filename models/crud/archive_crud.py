@@ -1,39 +1,38 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func
-from .models import PDFFile
+from models import Archive
 
-def get_by_id(db, pdf_id):
-    return db.query(PDFFile).filter(PDFFile.id == pdf_id).first()
+def get_by_id(db, id):
+    return db.query(Archive).filter(Archive.id == id).first()
 
 def get_all_images(db):
-    return db.query(PDFFile.thumbnail_image,
-                    PDFFile.filename).filter(PDFFile.filename.like("%pdf")).all()
+    return db.query(Archive.thumbnail_image,
+                    Archive.filename).filter(Archive.filename.like("%pdf")).all()
     
 def get_filenames(db, offset=0, limit=8):
-    return [filename for (filename,) in db.query(PDFFile.filename)
+    return [filename for (filename,) in db.query(Archive.filename)
                                           .offset(offset)
                                           .limit(limit)
                                           .all()]
 
 def count_files(db):
-    return db.query(PDFFile).count()
+    return db.query(Archive).count()
 
 def get_by_name(db, name, offset=0, limit=8):
-    return [filename for (filename,) in db.query(PDFFile.filename)
-                                          .filter(PDFFile.filename
+    return [filename for (filename,) in db.query(Archive.filename)
+                                          .filter(Archive.filename
                                                          .like(f"%{name}%"))
                                           .offset(offset)
                                           .limit(limit)
                                           .all()]
 
 def count_by_name(db, name):
-    return db.query(PDFFile).filter(PDFFile.filename
+    return db.query(Archive).filter(Archive.filename
                                            .like(f"%{name}%")).count()
 
 def get_file_by_name(db, name):
-    return db.query(PDFFile).filter(PDFFile.filename == name).first()
+    return db.query(Archive).filter(Archive.filename == name).first()
 
 def get_thumbnail_by_name(db, name):
     name = name.rsplit('.', 1)[0] #Without extension
-    return db.query(PDFFile).filter(PDFFile.filename.like(f"{name}%")).first()
+    return db.query(Archive).filter(Archive.filename.like(f"{name}%")).first()
 #thumbnail_image

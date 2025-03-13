@@ -6,8 +6,6 @@ services:
       - POSTGRES_USER=postgresql
       - POSTGRES_PASSWORD=postgresql
       - POSTGRES_DB=archive
-    volumes:
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - 127.0.0.1:5432:5432
     networks:

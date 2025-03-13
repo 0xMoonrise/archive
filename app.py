@@ -15,19 +15,19 @@ from flask import (
 import markdown
 from utils.utils import make_image, pages, make_thumbnail
 from pathlib import Path
-from db import crud
-from db.database import SessionLocal
-from sqlalchemy.orm import Session
 from io import BytesIO
 from math import ceil
+from models import crud, SessionLocal
 
 app = Flask(__name__)
 
 THUMBNAILS_DIR = os.path.join('static', 'thumbnails')
-LISTEN_HOST = os.environ.get('LISTEN_HOST', '127.0.0.1')
-LISTEN_PORT = os.environ.get('LISTEN_PORT', '5000')
+
+APP_HOST = os.environ.get('APP_HOST', '127.0.0.1')
+APP_PORT = os.environ.get('APP_PORT', '5000')
 
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 60
+app.config['SERVER_NAME'] = f"{APP_HOST}:{APP_PORT}"
 
 os.makedirs(THUMBNAILS_DIR, exist_ok=True)
 extensions = ('.pdf', '.md')
@@ -47,9 +47,14 @@ for image, filename in crud.get_all_images(db):
     if image is None:
         print(f"[-] {filename} image not found... skiping...")
         continue
+        
+    if os.path.exists(f"{THUMBNAILS_DIR}/{filename}"):
+        continue
+
     #static/thumbnails/ or maybe else where...
     with open(os.path.join(THUMBNAILS_DIR, filename.replace('pdf', 'webp')), "wb") as f:
         f.write(image)
+
 print("[+] Dumping thumbnails complete!")
 
 
@@ -85,16 +90,27 @@ def index():
 
 @app.route('/thumbnail/<filename>')
 def get_thumbnail(filename):
-    return send_from_directory(THUMBNAILS_DIR, filename)
+    if os.path.exists(f"{THUMBNAILS_DIR}/{filename}"):
+        return send_from_directory(THUMBNAILS_DIR, filename)
 
+    db = next(get_db())
+    thumbnail = crud.get_thumbnail_by_name(db, filename)
+
+    if not thumbnail:
+        return "File not found", 404
+
+    with open(os.path.join(THUMBNAILS_DIR, filename), "wb") as f:
+        f.write(image)
+
+    return send_from_directory(THUMBNAILS_DIR, filename)
 
 @app.route('/file/<filename>')
 def serve_file(filename):
     db = next(get_db())
-    file = crud.get_file_by_name(db, filename)
+    file = crud.get_file_by_name(db, filename).file
     if file:
-        print(f"File found: {file.filename}")
-        return Response(file.data, mimetype="application/pdf")
+        print(f"File found: {filename}")
+        return Response(file, mimetype="application/pdf")
     else:
         return "File not found", 404
 
@@ -153,4 +169,4 @@ def upload_file():
 
 
 if __name__ == '__main__':
-    app.run(host=LISTEN_HOST, port=LISTEN_PORT, debug=True)
+    app.run(debug=True)
