@@ -21,7 +21,7 @@ class Archive(Base):
     id = Column(Integer, primary_key=True, index=True)
     filename = Column(String, nullable=False)
     editorial = Column(String, nullable=False)
-    cover_page = Column(Integer, default=1, nullable=False)
+    cover_page = Column(Integer, server_default="1", nullable=False)
     file = Column(LargeBinary, nullable=False)
     favorite = Column(Boolean, server_default="false", nullable=False)
     thumbnail_image = Column(LargeBinary, nullable=True)

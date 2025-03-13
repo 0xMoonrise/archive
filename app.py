@@ -133,12 +133,12 @@ def view_md(filename):
     if filename.endswith('.md'):
         db = next(get_db())
         print(filename)
-        file = crud.get_file_by_name(db, filename)
+        file = crud.get_file_by_name(db, filename).file
         return render_template(
             'view_md.html',
             md_url=url_for('serve_file', filename=filename),
             content=markdown.markdown(
-                file.data.decode("utf-8"),
+                file.decode("utf-8"),
                 extensions=['fenced_code', 'tables'],
                 output_format="html5"))
     return "File not found", 404

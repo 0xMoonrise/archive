@@ -10,7 +10,7 @@ stop:
 	docker stop archive || true
 
 backup:
-	docker exec -it archive_db pg_dump -U postgresql -d archive -Fc --compress=9 -f /tmp/2025-03-12.tar
+	docker exec -it archive_db pg_dump -U postgresql -d archive -Fc --compress=9 -f /tmp/$(DATE).tar
 	docker cp archive_db:/tmp/$(DATE).tar ~/
 
 clean: stop
