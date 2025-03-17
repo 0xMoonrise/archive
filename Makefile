@@ -1,3 +1,5 @@
+include .env
+export
 DATE := $(shell date '+%Y-%m-%d')
 
 build:
@@ -10,8 +12,12 @@ stop:
 	docker stop archive || true
 
 backup:
-	docker exec -it archive_db pg_dump -U postgresql -d archive -Fc --compress=9 -f /tmp/$(DATE).tar
-	docker cp archive_db:/tmp/$(DATE).tar ~/
+	docker exec -it archive_db pg_dump -U $(DB_USER) -d $(DB_NAME) --data-only | gzip > /tmp/archive_db$(DATE).gz
+	# docker exec -it archive_db pg_dump -U postgresql -d archive -Fc --compress=9 -f /tmp/$(DATE).tar
+	# docker cp archive_db:/tmp/$(DATE).tar ~/
+
+restore:
+	gunzip -c /tmp/archive_db$(DATE).gz | docker exec -i archive_db psql -U $(DB_USER) -h localhost -d $(DB_NAME)
 
 clean: stop
 	docker rm archive || true

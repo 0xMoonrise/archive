@@ -2,10 +2,12 @@ services:
   db:
     image: postgres:13
     container_name: archive_db
+    env_file:
+      - .env
     environment:
-      - POSTGRES_USER=postgresql
-      - POSTGRES_PASSWORD=postgresql
-      - POSTGRES_DB=archive
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
     ports:
       - 127.0.0.1:5432:5432
     networks:
@@ -16,8 +18,10 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: archive
+    env_file:
+      - .env
     environment:
-      - DB_URI=postgresql+psycopg2://postgresql:postgresql@db:5432/archive
+      - DB_URI=postgresql+psycopg2://${DB_USER}:${DB_PASS}@db:5432/${DB_NAME}
     ports:
       - 5000:5000
     depends_on:

@@ -11,7 +11,7 @@ db_params = {
 }
 
 conn = None
-path = '/opt/extracted_files/'
+path = '/opt/lectures/'
 pdf_query = """
 INSERT INTO archive_schema.archive (filename,
                                     file,
@@ -38,18 +38,22 @@ try:
         if 'pdf' in filename:
             print(f"[+] {filename} Starting conversion...")
             img_byte_array = BytesIO()
+
             thumbnail = convert_from_bytes(BytesIO(pdf_data).read(),
                                            first_page=1,
                                            last_page=1)
+
             thumbnail[0].save(img_byte_array, format="WEBP", quality=100)
             webp_data = img_byte_array.getvalue()
+
             print("[+] Conversion was successful!")          
             cur.execute(pdf_query,
                         (filename,
                         psycopg2.Binary(pdf_data),
                         "Default ED",
                         1,
-                        psycopg2.Binary(webp_data)))
+                        psycopg2.Binary(webp_data))
+            )
 
         else:
             cur.execute(md_query,
