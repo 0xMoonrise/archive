@@ -1,6 +1,39 @@
 include .env
 export
+
 DATE := $(shell date '+%Y-%m-%d')
+
+#Standard development environment
+VENV_DIR=dev
+ENV_FILE=.env
+PYTHON=python3
+
+
+define DOT_ENV
+DB_USER=
+DB_NAME=
+SECRET_KEY=
+DB_NAME=
+endef
+
+
+env: $(VENV_DIR) $(ENV_FILE)
+	@echo "[+] Environment setup complete."
+	. $(VENV_DIR)/bin/activate && pip install -r requirements.txt
+
+$(VENV_DIR):
+	@echo "[+] Creating virtual environment..."
+	@$(PYTHON) -m venv $(VENV_DIR)
+	@echo "[+] Virtual environment created in $(VENV_DIR)."
+
+$(ENV_FILE):
+	@echo "[+] Creating .env file..."
+	@echo "$$DOT_ENV" > $(ENV_FILE)
+	@echo "[+] .env file created. Edit it with your values."
+
+
+# Docker rules
+
 
 build:
 	docker build -t archive	.

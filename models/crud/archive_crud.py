@@ -34,5 +34,5 @@ def get_file_by_name(db, name):
 
 def get_thumbnail_by_name(db, name):
     name = name.rsplit('.', 1)[0] #Without extension
-    return db.query(Archive).filter(Archive.filename.like(f"{name}%")).first()
+    return db.query(Archive.thumbnail_image).filter(Archive.filename.like(f"{name}%")).scalar()
 #thumbnail_image

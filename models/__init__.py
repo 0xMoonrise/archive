@@ -4,8 +4,13 @@ from .base import Base
 from .archive import Archive
 
 with engine.connect() as conn:
-    conn.execute(text("CREATE SCHEMA IF NOT EXISTS archive_schema"))
-    conn.commit()
+    try:
+        conn.execute(text("CREATE SCHEMA IF NOT EXISTS archive_schema"))
+        conn.commit()
+    except IntegrityError:
+        conn.rollback()
+    finally:
+        conn.close()
 
 inspector = inspect(engine)
 if "archive" not in inspector.get_table_names():

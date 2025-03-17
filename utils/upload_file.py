@@ -3,11 +3,12 @@ import sys
 import psycopg2
 from pdf2image import convert_from_bytes
 from io import BytesIO
+
 db_params = {
     "host": "localhost",
-    "dbname": "archive",
-    "user": "postgresql",
-    "password": "postgresql",
+    "dbname": os.environ.get('DB_NAME', 'archive'),
+    "user": os.environ.get('DB_USER', 'postgresql'),
+    "password": os.environ.get('DB_PASS', 'postgresql'),
 }
 
 conn = None

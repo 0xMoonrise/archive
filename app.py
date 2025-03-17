@@ -94,13 +94,14 @@ def get_thumbnail(filename):
         return send_from_directory(THUMBNAILS_DIR, filename)
 
     db = next(get_db())
-    thumbnail = crud.get_thumbnail_by_name(db, filename)
+    thumbnail = crud.get_thumbnail_by_name(db,
+                                           filename)
 
     if not thumbnail:
         return "File not found", 404
 
     with open(os.path.join(THUMBNAILS_DIR, filename), "wb") as f:
-        f.write(image)
+        f.write(thumbnail)
 
     return send_from_directory(THUMBNAILS_DIR, filename)
 
