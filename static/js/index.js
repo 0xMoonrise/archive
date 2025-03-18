@@ -1,5 +1,20 @@
 //My code is crap but is my code
 
+window.onload
+
+//https://medium.com/@ryan_forrester_/how-to-get-a-cookie-by-name-in-javascript-ff36761e5356
+function getCookieByName(name) {
+    const cookieString = document.cookie;
+    const cookies = cookieString.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.startsWith(name + '=')) {
+            return cookie.substring(name.length + 1);
+        }
+    }
+    return null;
+}
+
 const form = document.querySelector(".form-input");
 
 form.addEventListener("submit", (event) => {
@@ -67,7 +82,6 @@ function make_cardElement(filename)
 {
 
 	const cardList = document.querySelector(".card-list");
-
 	const card_container = document.createElement("div");
 	card_container.classList.add("card-container");
 
@@ -106,17 +120,20 @@ function make_cardElement(filename)
 	cardList.append(card_container);
 }
 
-function make_paginationSection(n_button, current=1)
+function make_paginationSection(n_button, current)
 {
     const pagination_section = document.querySelector(".pagination-section");
     pagination_section.innerHTML = "";
+	document.cookie = `page=${current}`; 
+
     const currentColor = "#e0e0e0"
     const max_buttons = 5;
+
     let start, end;
 
     if(n_button <= max_buttons)
     {
-        start = 1;
+        start = current;
         end = n_button;
     }
     else
@@ -136,14 +153,17 @@ function make_paginationSection(n_button, current=1)
     let button1 = document.createElement("button");
     button1.innerText = 1;
     button1.classList.add("pagination-button");
+
     if(current === 1){
-        button1.classList.add("active");
+        //button1.classList.add("active");
         button1.style.backgroundColor = currentColor;
     }
+
     button1.addEventListener("click", function () {
         make_paginationSection(n_button, 1);
         button_event(this);
     });
+
     pagination_section.append(button1);
 
     if(start > 2) {
@@ -156,38 +176,48 @@ function make_paginationSection(n_button, current=1)
     for(let i = start; i <= end; i++) {
         if (i === 1 || i === n_button) continue;
         let button = document.createElement("button");
+
         button.innerText = i;
         button.classList.add("pagination-button");
+
         if (i === current){
              button.classList.add("active");
              button.style.backgroundColor = currentColor;
         }
+
         button.addEventListener("click", function () {
             make_paginationSection(n_button, i);
             button_event(this);
         });
+
         pagination_section.append(button);
     }
 
     if(end < n_button - 1) {
 		let dots = document.createElement("button");
+
 		dots.classList.add("pagination-button");
         dots.innerText = "...";
+
         pagination_section.append(dots);
     }
 
     if(n_button > 1) {
         let buttonLast = document.createElement("button");
+
         buttonLast.innerText = n_button;
         buttonLast.classList.add("pagination-button");
+
         if (current === n_button){
             buttonLast.classList.add("active");
             buttonLast.style.backgroundColor = currentColor;
         }
+
         buttonLast.addEventListener("click", function () {
             make_paginationSection(n_button, n_button);
             button_event(this);
         });
+
         pagination_section.append(buttonLast);
     }
 }
@@ -195,13 +225,18 @@ function make_paginationSection(n_button, current=1)
 document.addEventListener("DOMContentLoaded", async () => {
     try
     {
-        const response = await fetch(`/get_files/1`);
+    	let page = parseInt(getCookieByName('page'));
+    	page = page ? page : 1; 
+    	
+        const response = await fetch(`/get_files/${page}`);
         const archive = await response.json();
+
 		//Loaded from all
         archive.files.forEach(filename => {
             make_cardElement(filename);
         });
-		make_paginationSection(archive.pages);
+        
+		make_paginationSection(archive.pages, page);
     }
     catch (error)
     {
