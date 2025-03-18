@@ -138,7 +138,6 @@ def view_pdf(filename):
 def view_md(filename):
     if filename.endswith('.md'):
         db = next(get_db())
-        print(filename)
         file = crud.get_file_by_name(db, filename).file
         return render_template(
             'view_md.html',
@@ -167,16 +166,19 @@ def upload_file():
                         'message': 'Only PDF files are allowed.'}), 415
 
     db = next(get_db())
-
     bytes_file = file.read()
-    img_byte_array = BytesIO()
-    thumbnail = convert_from_bytes(BytesIO(bytes_file).read(),
-                                   first_page=1,
-                                   last_page=1)
 
-    thumbnail[0].save(img_byte_array, format="WEBP", quality=100)
+    if 'pdf' in file.filename:
+        img_byte_array = BytesIO()
+        thumbnail = convert_from_bytes(BytesIO(bytes_file).read(),
+                                       first_page=1,
+                                       last_page=1)
 
-    webp_data = img_byte_array.getvalue()
+        thumbnail[0].save(img_byte_array, format="WEBP", quality=100)
+
+        webp_data = img_byte_array.getvalue()
+    else:
+        webp_data = None
 
     crud.insert_file(db,
                      file.filename,
