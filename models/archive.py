@@ -1,5 +1,5 @@
 from sqlalchemy import (
-    Column, 
+    Column,
     Integer,
     String,
     Boolean,
@@ -8,8 +8,8 @@ from sqlalchemy import (
     CheckConstraint,
     func
 )
-from datetime import datetime
 from .base import Base
+
 
 class Archive(Base):
     __tablename__ = "archive"
@@ -29,3 +29,10 @@ class Archive(Base):
 
     def __repr__(self):
         return f"<Archive(id={self.id}, filename={self.filename})>"
+
+    def __init__(self, filename, editorial, file, favorite, thumbnail_image):
+        self.filename = filename
+        self.editorial = editorial
+        self.file = file
+        self.favorite = favorite
+        self.thumbnail_image = thumbnail_image

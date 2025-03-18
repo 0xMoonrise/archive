@@ -8,14 +8,13 @@ from flask import (
     url_for,
     request,
     jsonify,
-    send_file,
-    redirect,
     Response
 )
 import markdown
-from utils.utils import make_image, pages, make_thumbnail
-from pathlib import Path
+from pdf2image import convert_from_bytes
 from io import BytesIO
+# from pathlib import Path
+# from io import BytesIO
 from math import ceil
 from models import crud, SessionLocal
 
@@ -32,12 +31,14 @@ app.config['SERVER_NAME'] = f"{APP_HOST}:{APP_PORT}"
 os.makedirs(THUMBNAILS_DIR, exist_ok=True)
 extensions = ('.pdf', '.md')
 
+
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
 
 db = next(get_db())
 
@@ -47,12 +48,13 @@ for image, filename in crud.get_all_images(db):
     if image is None:
         print(f"[-] {filename} image not found... skiping...")
         continue
-        
+
     if os.path.exists(f"{THUMBNAILS_DIR}/{filename}"):
         continue
 
-    #static/thumbnails/ or maybe else where...
-    with open(os.path.join(THUMBNAILS_DIR, filename.replace('pdf', 'webp')), "wb") as f:
+    # static/thumbnails/ or maybe else where...
+    with open(os.path.join(THUMBNAILS_DIR,
+                           filename.replace('pdf', 'webp')), "wb") as f:
         f.write(image)
 
 print("[+] Dumping thumbnails complete!")
@@ -66,7 +68,8 @@ def get_files(index):
 
     match request.method:
         case "POST":
-            # This retrieves all the necessary files from the database based on the query
+            # This retrieves all the necessary files from the
+            # database based on the query
             query = request.form.get("query")
             pager = ceil(crud.count_by_name(db, query)/splitter)
             archive = crud.get_by_name(db,
@@ -80,8 +83,9 @@ def get_files(index):
                                          offset=splitter*(index-1),
                                          limit=splitter)
 
-    return jsonify({"files" : archive,
+    return jsonify({"files": archive,
                     "pages": pager}), 200
+
 
 @app.route('/')
 def index():
@@ -104,6 +108,7 @@ def get_thumbnail(filename):
         f.write(thumbnail)
 
     return send_from_directory(THUMBNAILS_DIR, filename)
+
 
 @app.route('/file/<filename>')
 def serve_file(filename):
@@ -161,9 +166,24 @@ def upload_file():
         return jsonify({'success': False,
                         'message': 'Only PDF files are allowed.'}), 415
 
-    #file_path = os.path.join(DIR, file.filename)
-    #file.save(file_path)
-    #make_image(file.filename, DIR, THUMBNAILS, 1)
+    db = next(get_db())
+
+    bytes_file = file.read()
+    img_byte_array = BytesIO()
+    thumbnail = convert_from_bytes(BytesIO(bytes_file).read(),
+                                   first_page=1,
+                                   last_page=1)
+
+    thumbnail[0].save(img_byte_array, format="WEBP", quality=100)
+
+    webp_data = img_byte_array.getvalue()
+
+    crud.insert_file(db,
+                     file.filename,
+                     "Default",
+                     bytes_file,
+                     False,
+                     webp_data)
 
     return jsonify({'success': True,
                     'message': 'File uploaded successfully.'}), 201
