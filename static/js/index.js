@@ -1,6 +1,6 @@
 //My code is crap but is my code
 
-window.onload
+// window.onload
 
 //https://medium.com/@ryan_forrester_/how-to-get-a-cookie-by-name-in-javascript-ff36761e5356
 function getCookieByName(name) {
@@ -52,10 +52,12 @@ function uploadFile()
 async function sendData()
 {
     const search = new FormData(form);
-
+	let page = parseInt(getCookieByName('page'));
+	page = page ? page : 1;
+	
     try
     {
-	    const response = await fetch(`${window.location.origin}/get_files/1`,
+	    const response = await fetch(`${window.location.origin}/get_files/${page}`,
 	    {
 	        method: "POST",
 	        body: search,
@@ -70,7 +72,7 @@ async function sendData()
 		archive.files.forEach(filename => {
     		make_cardElement(filename);
 		});
-		make_paginationSection(archive.pages);
+		make_paginationSection(archive.pages, page);
     }
     catch (e)
     {
